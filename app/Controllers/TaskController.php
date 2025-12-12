@@ -10,12 +10,6 @@ class TaskController
 {
     protected $tasks;
     protected $_db;
-    /**
-     * @param int $id
-     * @param RouteCollection $routes
-     * @return void
-     */
-
     public function __construct(){
         global $db;
         $this->_db = $db;

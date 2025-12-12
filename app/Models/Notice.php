@@ -24,12 +24,19 @@ class Notice
     protected string $_dateCreated;
     protected string $_status;
 
+    /**
+     * Constructor for the class.
+     *
+     * @param Db $connection The database connection instance.
+     * @return void
+     */
     public function __construct(Db $connection)
     {
         $this->_connection = $connection;
     }
 
     // GET METHODS
+
     public function getId()
     {
         return $this->_id;
@@ -45,11 +52,17 @@ class Notice
         return $this->_name;
     }
 
+    /**
+     *
+     */
     public function setName(string $name): void
     {
         $this->_name = $name;
     }
 
+    /**
+     *
+     */
     public function getUserId()
     {
         return $this->_userId;
@@ -83,6 +96,12 @@ class Notice
         $this->_userId = $userId;
     }
 
+    public function getMessage()
+    {
+        return $this->_message;
+    }
+
+    // CRUD OPERATIONS
     public function loadNotice(int $noticeId): void
     {
         $query = "SELECT * FROM `notices` WHERE `id` = ?";
@@ -99,8 +118,6 @@ class Notice
             $this->_userId      = $result['user_id'];
         }
     }
-
-    // CRUD OPERATIONS
 
     public function saveNotice(): void
     {
@@ -123,10 +140,5 @@ class Notice
         } catch (Exception $e) {
             $_SESSION['error'] = $e->getMessage();
         }
-    }
-
-    public function getMessage()
-    {
-        return $this->_message;
     }
 }

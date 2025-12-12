@@ -13,25 +13,36 @@ class Messages
      */
     protected Db $_connection;
 
+    /**
+     * @var BaseCollection
+     */
     protected BaseCollection $_messageCollection;
 
+    /**
+     * @var BaseCollection
+     */
     protected BaseCollection $_unreadMessageCollection;
 
-    public function __construct(Db $db)
+    /**
+     * @var int
+     */
+    protected int $_userId;
+
+    public function __construct(Db $db, $userId = null)
     {
         $this->_connection = $db;
+        $this->_userId     = $userId;
     }
 
     /**
      * Retrieves messages for a specified user.
      *
-     * @param int $userId The ID of the user for whom messages are to be retrieved.
      * @return BaseCollection A collection of Message objects associated with the specified user.
      */
-    public function getMessages(int $userId): BaseCollection
+    public function getMessages(): BaseCollection
     {
         $query = "SELECT `id` FROM messages where `toUserId` = ?";
-        $this->_connection->query($query, [$userId]);
+        $this->_connection->query($query, [$this->_userId]);
         $results = $this->_connection->fetchAll();
 
         if ($results) {
@@ -49,10 +60,20 @@ class Messages
         return $this->_messageCollection;
     }
 
-    public function getUserUnreadMessages(int $userId): BaseCollection
+    /**
+     * Retrieves the collection of unread messages for the user.
+     *
+     * This method queries the database to fetch messages that are marked as
+     * unread and belong to the currently authenticated user. It initializes
+     * each unread message and stores them in a collection, which is then returned.
+     *
+     * @return BaseCollection A collection of unread messages for the user.
+     *                         Returns an empty collection if no unread messages are found.
+     */
+    public function getUserUnreadMessages(): BaseCollection
     {
         $query = "SELECT `id` FROM messages where `toUserId` = ? AND `status` = 'UNREAD'";
-        $this->_connection->query($query, [$userId]);
+        $this->_connection->query($query, [$this->_userId]);
         $results = $this->_connection->fetchAll();
 
         if (!empty($results)) {
@@ -68,5 +89,4 @@ class Messages
         }
         return $this->_unreadMessageCollection;
     }
-
 }

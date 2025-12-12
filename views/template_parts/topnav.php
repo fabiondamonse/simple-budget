@@ -10,11 +10,11 @@ if (!empty($_SESSION['error'])) {
     unset($_SESSION['error']);
 }
 
-$notices = new \App\Models\Notices($db);
-$userNotices = $notices->getNotices($_SESSION['user_id']);
+$notices = new \App\Models\Notices($db, $_SESSION['user_id']);
+$userNotices = $notices->getUnReadNotices();
 
-$messages = new \App\Models\Messages($db);
-$userMessages = $messages->getUserUnreadMessages($_SESSION['user_id']);
+$messages = new \App\Models\Messages($db, $_SESSION['user_id']);
+$userMessages = $messages->getUserUnreadMessages();
 ?>
 
 <!-- Topbar -->
@@ -99,7 +99,7 @@ $userMessages = $messages->getUserUnreadMessages($_SESSION['user_id']);
                         <span class="font-weight-bold"><?= $userNotice->getMessage(); ?></span>
                     </div>
                     <div class="ml-3">
-                        <div class="icon-circle bg-primary">
+                        <div class="icon-circle bg-primary" onclick="markNoticeAsRead(this)" data-notice-id="<?= $userNotice->getId(); ?>">
                             <i class="fas fa-check text-white"></i>
                         </div>
                     </div>
