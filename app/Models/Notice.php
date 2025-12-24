@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Db;
@@ -96,12 +97,6 @@ class Notice
         $this->_userId = $userId;
     }
 
-    public function getMessage()
-    {
-        return $this->_message;
-    }
-
-    // CRUD OPERATIONS
     public function loadNotice(int $noticeId): void
     {
         $query = "SELECT * FROM `notices` WHERE `id` = ?";
@@ -119,13 +114,9 @@ class Notice
         }
     }
 
-    public function saveNotice(): void
+    public function updateNotice(): void
     {
-        $sql = "";
-
-        // check if current object has id (saved in the DB)
-        if (!empty($this->_id)) {
-            $sql = "UPDATE `notices`
+        $sql = "UPDATE `notices`
             SET
                     `id` = $this->_id,
                     `user_id` = $this->_userId,
@@ -133,12 +124,35 @@ class Notice
                     `message` = \"$this->_message\",
                     `status` = \"$this->_status\"
             WHERE `id` = $this->_id;";
-        }
 
         try {
             $this->_connection->query($sql);
         } catch (Exception $e) {
             $_SESSION['error'] = $e->getMessage();
         }
+    }
+
+    public function createNotice(): int|string
+    {
+        $sql = "INSERT INTO `notices` (`id`, `user_id`, `name`, `message`, `status`) VALUES (NULL, $this->_userId, \"$this->_name\", \"$this->_message\", \"$this->_status\")";
+        try {
+            $this->_connection->query($sql);
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            return 0;
+        }
+        return $this->_connection->lastInsertId();
+    }
+
+    // CRUD OPERATIONS
+
+    public function getMessage()
+    {
+        return $this->_message;
+    }
+
+    public function setMessage(string $message)
+    {
+        $this->_message = $message;
     }
 }

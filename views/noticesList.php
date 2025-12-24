@@ -62,7 +62,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                          */
                                         foreach ($listNotices as $noticeItem): ?>
                                             <tr>
-                                                <th><a href="/task/<?= $noticeItem->getId(); ?>"><?= $noticeItem->getName(); ?></a></th>
+                                                <th><a href="/notice/<?= $noticeItem->getId(); ?>"><?= $noticeItem->getName(); ?></a></th>
                                                 <th><?= $noticeItem->getStatus(); ?></th>
                                                 <th><?= $noticeItem->getDateCreated(); ?></th>
                                             </tr>

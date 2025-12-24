@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * The baseHelper class provides utility methods for application helpers.
+ */
+
 namespace App;
 
 class baseHelper
