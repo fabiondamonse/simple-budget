@@ -16,3 +16,8 @@ $routes->add('notice', new Route(constant('URL_SUBFOLDER') . '/notice/{id}', arr
 $routes->add('noticeList', new Route(constant('URL_SUBFOLDER') . '/noticeList', array('controller' => 'NoticeController', 'method'=>'listAction'), []));
 $routes->add('addNotice', new Route(constant('URL_SUBFOLDER') . '/addNotice', array('controller' => 'NoticeController', 'method'=>'addAction'), []));
 $routes->add('noticeMarkAsRead', new Route(constant('URL_SUBFOLDER') . '/notice/mark_as_read/{id}', array('controller' => 'NoticeController', 'method'=>'markAsRead'), []));
+
+$routes->add('message', new Route(constant('URL_SUBFOLDER') . '/message/{id}', array('controller' => 'MessageController', 'method'=>'showAction'), array('id' => '[0-9]+')));
+$routes->add('messages', new Route(constant('URL_SUBFOLDER') . '/messages', array('controller' => 'MessageController', 'method'=>'listAction'), []));
+$routes->add('addMessage', new Route(constant('URL_SUBFOLDER') . '/addMessage', array('controller' => 'MessageController', 'method'=>'addAction'), []));
+$routes->add('messageMarkAsRead', new Route(constant('URL_SUBFOLDER') . '/message/mark_as_read/{id}', array('controller' => 'MessageController', 'method'=>'markAsRead'), []));

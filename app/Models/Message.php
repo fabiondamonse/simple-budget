@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class Message
+ *
+ * Represents a message entity in the application, providing methods for retrieving and manipulating message data.
+ * Includes functionality for database operations such as loading, creating, and updating message records.
+ */
+
 namespace App\Models;
 
 use App\Db;
@@ -145,34 +152,55 @@ class Message
      *                            include keys for `fromUserId`, `toUserId`, `subject`, `message`, `dateCreated`, and `status`.
      * @return string|int The ID of the newly created message record.
      */
-    public function createMessage(array $messageData): string|int
+
+    public function createMessage(array $messageData = []): string|int
     {
+        if(empty($messageData)){
+            $messageData['fromUserId'] = $_SESSION['user_id'];
+            $messageData['toUserId'] = $this->_toUserId;
+            $messageData['subject'] = $this->_subject;
+            $messageData['message'] = $this->_message;
+            $messageData['status'] = $this->_status;
+        }
+
         $query = "INSERT INTO `messages`";
         $query .= "(`fromUserId`, `toUserId`, `subject`, `message`, `dateCreated`, `status`)";
-        $query .= "VALUES (?, ?, ?, ?, ?, ?)";
+        $query .= "VALUES (?, ?, ?, ?, NOW(), ?)";
         $this->_connection->query($query, $messageData);
         return $this->_connection->lastInsertID();
     }
 
     /**
-     * Updates a message record in the database with the provided data for a specific message ID.
+     * Updates an existing message record in the database with the current object properties.
      *
-     * @param array $messageData An associative array where the keys represent the column names and
-     *                            the values represent the new values to update for the message record.
-     * @param int $messageId The ID of the message to be updated in the database.
-     * @return Db The result of the database query execution.
+     * The method updates the `fromUserId`, `toUserId`, `message`, `subject`, and `status` fields
+     * in the `messages` table for the message identified by its `id`.
+     * It uses the database connection to execute the update query.
+     * If an error occurs during the update, it captures the exception and stores the error message in the session.
+     *
+     * @return void
      */
-    public function updateMessage(array $messageData, int $messageId): Db
+    public function updateMessage(): Void
     {
-        $query = "UPDATE `messages` SET ";
-        foreach ($messageData as $key => $value) {
-            $query .= "`$key`='$value',";
-        }
-        $query = trim($query, ",");
-        $query .= " WHERE `id` = $messageId";
+        $sql = "UPDATE `messages`
+            SET
+                    `fromUserId` = $this->_fromUserId,
+                    `toUserId` = $this->_toUserId,
+                    `message` = \"$this->_message\",
+                    `subject` = \"$this->_subject\",
+                    `status` = \"$this->_status\"
+            WHERE `id` = $this->_id;";
 
-        $queryResult = $this->_connection->query($query);
-        return $queryResult;
+        try {
+            $this->_connection->query($sql);
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
     }
 
+    public function deleteMessage(int $messageId)
+    {
+        $query = "DELETE FROM `messages` WHERE `id` = ?";
+        $this->_connection->query($query, [$messageId]);
+    }
 }
